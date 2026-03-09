@@ -1,0 +1,139 @@
+You are a synthetic data generator. Create a dataset that mimics Instagram ingestion logs for fashion trend mining in a specific region, with strong temporal dynamics.
+
+GOAL
+Generate realistic Instagram-like RAW post JSON for a 6-month period (~180 days) totaling 5,000 posts. The dataset must capture: (a) trends that emerge/peak/decay, (b) engagement that accumulates over time, (c) region cues embedded in hashtags/captions (no explicit geo fields), and (d) influencer/business ecology.
+IMPORTANT: Do NOT output category labels or trend IDs inside posts. Categories and location/region will be inferred later from hashtags/captions.
+
+OUTPUT STRATEGY (CHUNKED)
+Because 5,000 posts is large, generate output in multiple chunks.
+- In this run: generate {CHUNK_SIZE} posts (recommended 250 or 500).
+- Each run covers a contiguous time window within the 6 months.
+- Return an updated "trend_state" object that I will paste into the next run to preserve continuity (users, trend lifecycles, counters).
+- Maintain stable user identities across runs.
+
+PARAMETERS (fill these before generating)
+- REGION_TARGET: {REGION_TARGET} (e.g., "UAE (Dubai focus)" or "UAE+KSA")  // NOTE: do not create explicit location fields; embed regional cues in hashtags/captions
+- START_DATE_UTC: {START_DATE_UTC} (e.g., "2025-10-01T00:00:00Z")
+- END_DATE_UTC: {END_DATE_UTC} (START_DATE + 6 months)
+- CHUNK_WINDOW_START_UTC: {CHUNK_WINDOW_START_UTC}
+- CHUNK_WINDOW_END_UTC: {CHUNK_WINDOW_END_UTC}
+- CHUNK_SIZE: {CHUNK_SIZE}
+- INPUT_TREND_STATE: {INPUT_TREND_STATE} (if empty, initialize a new state)
+
+INSTAGRAM-LIKE RAW POST SCHEMA (EACH POST = ONE JSON OBJECT)
+Each post must include:
+
+1) Identity & author
+- post_id: unique string like "IGP_20251012_000123"
+- user:
+  - user_id (stable across dataset)
+  - username (invented, no real people)
+  - follower_count (int; consistent with influencer_tier)
+  - account_type: one of ["creator","business","personal"]
+  - influencer_tier: one of ["nano","micro","mid","macro"]
+  - verified: boolean
+
+2) Time & text
+- timestamp_utc: ISO 8601 within the chunk window
+- caption_text: realistic; may include emojis; Arabic/English mix; no hate/harassment; avoid real person names
+  - captions should occasionally contain region hints as plain text (e.g., “Dubai”, “JBR”, “Riyadh”, “Doha”, “Abu Dhabi”) but do NOT add a structured location field
+- hashtags: array of strings (include Arabic hashtags sometimes)
+  - hashtags MUST carry region signals (e.g., #dubaifashion, #uaestyle, #riyadhfashion, Arabic equivalents)
+- mentions: array of usernames (invented)
+
+3) Media
+- media:
+  - media_type: one of ["image","carousel","reel"]
+  - aspect_ratio: typical values (e.g., "1:1","4:5","9:16")
+  - duration_sec: integer for reels, else null
+  - audio_id: optional string for reels
+  - has_face: boolean
+  - has_product_closeup: boolean
+
+4) Engagement (temporal accumulation)
+Simulate engagement growth as if you read totals repeatedly after posting.
+Include:
+- engagement_observed:
+  - snapshots: array of objects with these exact t_day points:
+    [0, 1, 2, 3, 5, 7, 10, 14, 21, 30]
+Each snapshot object includes:
+  - t_day (int)
+  - likes_total (int)
+  - comments_total (int)
+  - shares_total (int)        // treat as "share proxy" (DM/story/external combined)
+  - saves_total (int)
+  - views_total (int|null)    // only for reels; null for image/carousel
+Rules:
+- Totals must be non-decreasing across snapshots.
+- Reels: high views; moderate likes; shares vary.
+- Carousels: higher saves for styling tips.
+- Promotional posts: higher comments/questions; sometimes lower saves.
+- Engagement must correlate with follower_count + influencer_tier, but with noise.
+- Include viral outliers: top 0.5% posts have unusually high growth.
+- Some posts plateau early; some grow steadily.
+
+5) Language hint
+- language_hint: one of ["ar","ar-en","mixed"]
+
+6) Ingestion metadata (simulate hashtag-based discovery)
+- ingestion:
+  - ingest_batch_id: string like "IG_INGEST_YYYYMMDD_runNN"
+  - ingest_date_utc: ISO 8601 (can be same day or next day)
+  - source: "synthetic_instagram"
+  - api_mode: "hashtag_recent_media_sim"
+  - query_seeds: array of hashtags/keywords used to discover this post
+
+TEMPORAL DYNAMICS (MUST-HAVE)
+Simulate 8–12 evolving fashion-related trends across the full 6 months. Do NOT label them explicitly; reflect them through text/hashtags and media patterns.
+Examples of latent trends to simulate (do not output as labels):
+- modest/abaya styling; Ramadan/Eid edits (seasonal spike if relevant in dates)
+- streetwear sneaker drops; oversized fits
+- luxury bags/watch styling
+- capsule wardrobe / neutral tones
+- sustainable/thrift flips
+- local designer pop-ups / trunk shows
+- athleisure sets
+- fragrance/oud adjacent co-occurrence with fashion styling
+Trend behavior:
+- Each trend has start week, growth, peak, decay.
+- Region-specific adoption differences should appear via differing region hashtags/caption hints (not structured fields).
+- Inject occasional “events” causing spikes (fashion week, pop-up, brand drop, seasonal change).
+
+USER ECOLOGY (MUST-HAVE)
+Create a stable pool of ~300–600 users across the full dataset:
+- Some are frequent posters; some occasional.
+- Businesses post promos/sales/new arrivals.
+- Creators post OOTD/reels/styling tips.
+- Include collaborations (mentions) and brand tagging.
+- Keep follower_count stable with small drift (optional) but not random jumps.
+
+DATA QUALITY RULES
+- JSON must be valid.
+- No duplicate post_id.
+- timestamps distributed realistically (more evenings/weekends; mild seasonality).
+- 2–3% captions are “noisy” (emoji-only or very short).
+- Keep everything fictional and safe.
+
+RETURN FORMAT (ONE JSON OBJECT)
+Return exactly:
+{
+  "meta": {
+    "region_target": "...",
+    "start_date_utc": "...",
+    "end_date_utc": "...",
+    "chunk_window_start_utc": "...",
+    "chunk_window_end_utc": "...",
+    "chunk_size": {CHUNK_SIZE},
+    "total_target_posts": 5000,
+    "schema_version": "ig_synth_v3"
+  },
+  "trend_state": { ... },   // MUST include: user_pool summary, active trend lifecycles, hashtag/keyword pools, counters for post_id and ingest_batch_id
+  "posts": [ ... {CHUNK_SIZE} posts ... ]
+}
+
+BEFORE YOU GENERATE
+- If INPUT_TREND_STATE is empty: initialize it (users + trend lifecycles + counters).
+- If INPUT_TREND_STATE is provided: continue from it faithfully (same users, evolving trends, counters incremented).
+- Ensure all posts fall within CHUNK_WINDOW_START_UTC and CHUNK_WINDOW_END_UTC.
+
+Now generate the dataset chunk.
