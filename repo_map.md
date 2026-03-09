@@ -18,6 +18,7 @@ Source: `codegraph` MCP (required)
 │   ├── docs/
 │   │   └── README.md
 │   └── prompts/
+│       ├── data_analysis.txt
 │       └── ig_synth_v3_prompt.txt
 └── repo_map.md
 ```

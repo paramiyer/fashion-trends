@@ -1,0 +1,106 @@
+You are a data analyst. I will provide:
+1) a JSONL file of synthetic Instagram posts: `ig_posts_6mo_5000_mix.jsonl` (1 JSON object per line)
+2) a meta JSON file: `ig_meta_6mo_5000_mix.json`
+
+TASK
+Compute dataset statistics, trend inferences (hashtags-only), and classification evaluation using ground-truth labels.
+
+FILES
+- Posts: ig_posts_6mo_5000_mix.jsonl
+- Meta:  ig_meta_6mo_5000_mix.json
+
+REQUIRED OUTPUT (use these exact sections)
+
+1) Dataset Overview
+- total_posts
+- date range (min/max timestamp_utc)
+- engagement snapshot days (from meta if present)
+- schema_version
+- target region (from meta)
+- non_fashion_rate (from meta)
+
+2) Users
+- unique_user_count (distinct user.user_id)
+- distribution by influencer_tier (nano/micro/mid/macro)
+- distribution by account_type (creator/business/personal)
+- verified_count and verified_rate
+- top 10 users by follower_count (user_id, username, follower_count, tier)
+
+3) Content Mix
+- media_type counts (image/carousel/reel)
+- language_hint counts (ar/ar-en/mixed)
+- mentions rate (posts where mentions length > 0)
+- hashtag count stats (min/median/p90/max number of hashtags per post)
+- average caption length (characters) + p90
+
+4) Ground Truth Mix (from JSON labels)
+Use `labels.is_fashion` and `labels.noise_topic`.
+Report:
+- fashion_count, non_fashion_count, non_fashion_rate
+- non_fashion breakdown by labels.noise_topic (counts)
+- show 3 example posts per noise_topic (post_id + 1-line caption snippet + first 5 hashtags)
+IMPORTANT: Examples must be safe and short; do not dump full posts.
+
+5) Trend Inference (hashtags ONLY) for FASHION posts
+IMPORTANT:
+- Do NOT use labels.noise_topic to infer fashion trends.
+- Only run trend inference on posts where labels.is_fashion = true.
+- Infer trends using hashtag signatures (below) and assign at most ONE trend per post:
+  - If multiple match, pick the trend with the most signature hits.
+  - If tie, use this priority:
+    fashionweek > modest_abaya > streetwear_sneakers > luxury_accessories > capsule_neutrals > thrift_sustainable > local_designers > athleisure_sets > fragrance_oud > resort_summer
+- Report:
+  - counts per trend
+  - unmatched count
+  - top 20 hashtags overall among fashion posts (exclude common region tags below)
+
+Signature hashtag sets:
+- modest_abaya: {#abayastyle, #modestfashion, #hijabstyle, #عباية, #موضة_محتشمة, #abayaedit}
+- streetwear_sneakers: {#streetwear, #sneakerhead, #kicks, #oversizedfit}
+- luxury_accessories: {#luxurystyle, #designerbag, #watchstyle, #goldjewelry, #uaeluxury, #رفاهية}
+- capsule_neutrals: {#capsulewardrobe, #neutrals, #minimalstyle, #wardrobeedit, #basicbutbetter, #ستايل}
+- thrift_sustainable: {#thriftflip, #sustainablefashion, #upcycled, #slowfashion, #secondhand, #استدامة}
+- local_designers: {#localdesigner, #dubaiatelier, #madeinuae, #dxbcreatives, #popup, #مصمم_محلي}
+- athleisure_sets: {#athleisure, #gymfit, #activewear, #matchingset, #uaefitness, #رياضة}
+- fragrance_oud: {#oud, #fragrance, #perfume, #layering, #عطر, #عود}
+- fashionweek: {#fashionweek, #runway, #frontrow, #catwalk, #أسبوع_الموضة}
+- resort_summer: {#resortwear, #beachstyle, #summerfit, #poolday, #jbr, #صيف}
+
+Exclude these common region/generic tags from “top trend hashtags” calculations:
+{#dubai, #uae, #dxb, #weekend, #دبي, #الإمارات, #ابوظبي, #mydubai,
+ #dubaifashion, #uaefashion, #uaestyle, #dxbstyle, #dubailife}
+
+6) Fashion Detection Evaluation (accuracy estimation)
+Assume we have/are testing a detector that outputs a boolean `pred_is_fashion` per post.
+If the file does NOT contain predictions, then:
+- Build a simple baseline predictor using text evidence only:
+  pred_is_fashion = True if (any trend signature hashtag match) OR (caption/hashtags contain fashion lexicon terms)
+  else False
+Fashion lexicon (case-insensitive):
+{fashion, style, ootd, grwm, fitcheck, outfit, wardrobe, couture, abaya, hijab, streetwear, sneaker, designer, bag, watch,
+ athleisure, activewear, runway, lookbook, capsule, neutral, thrift, sustainable, perfume, oud,
+ عباية, موضة, ستايل, لوك, أناقة, عطر, عود}
+
+Then compute:
+- confusion matrix (TP, FP, TN, FN) using labels.is_fashion as ground truth
+- precision, recall, F1, accuracy
+- false positive analysis: top 10 hashtags causing FP (from non-fashion posts misclassified)
+- false negative analysis: top 10 hashtags in FN fashion posts (missed signals)
+
+If the file DOES contain predictions (e.g., a field `pred.is_fashion`), use those instead and still compute the same metrics.
+
+7) Integrity Checks
+- confirm total_posts parsed = lines in JSONL
+- confirm engagement snapshots exist and are monotonic non-decreasing per post (count violations)
+- confirm language_hint ∈ {ar, ar-en, mixed} (count violations)
+- confirm labels.is_fashion exists for all posts and labels.noise_topic is null when is_fashion=true (count violations)
+
+FORMAT
+- Provide:
+  A) a short narrative summary (8–12 bullets)
+  B) a compact JSON block containing all computed stats + evaluation metrics (machine-readable)
+
+RULES
+- Do NOT paste the full dataset.
+- Keep examples minimal (snippets only).
+- If you run code, use Python and state assumptions.
