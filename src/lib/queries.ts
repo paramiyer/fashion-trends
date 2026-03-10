@@ -60,7 +60,7 @@ export async function fetchUserInfluenceOverall(
 
   let query = supabase
     .from('gl_user_influence_7d_overall')
-    .select('window_end_date, analysis_type, user_id, username, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_overall')
+    .select('window_end_date, analysis_type, user_id:canonical_user_id, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_overall')
     .eq('window_end_date', latestDate)
     .order('rank_overall', { ascending: true })
     .limit(limit)
@@ -93,7 +93,7 @@ export async function fetchUserInfluenceByCategory(
 
   let query = supabase
     .from('gl_user_influence_7d_by_category')
-    .select('window_end_date, category, analysis_type, user_id, username, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_in_category')
+    .select('window_end_date, category, analysis_type, user_id:canonical_user_id, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_in_category')
     .eq('window_end_date', latestDate)
     .eq('category', category)
     .order('rank_in_category', { ascending: true })
@@ -126,7 +126,7 @@ export async function fetchUserCategoryBreakdown(
   const latestDateResult = await supabase
     .from('gl_user_influence_7d_by_category')
     .select('window_end_date')
-    .eq('user_id', userId)
+    .eq('canonical_user_id', userId)
     .lte('window_end_date', filters.dateTo)
     .gte('window_end_date', filters.dateFrom)
     .order('window_end_date', { ascending: false })
@@ -137,8 +137,8 @@ export async function fetchUserCategoryBreakdown(
 
   let query = supabase
     .from('gl_user_influence_7d_by_category')
-    .select('window_end_date, category, analysis_type, user_id, username, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_in_category')
-    .eq('user_id', userId)
+    .select('window_end_date, category, analysis_type, user_id:canonical_user_id, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_in_category')
+    .eq('canonical_user_id', userId)
     .eq('window_end_date', latestDate)
     .order('influence_score_7d', { ascending: false })
 
