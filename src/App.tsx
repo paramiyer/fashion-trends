@@ -13,12 +13,14 @@ import { useFilters } from './hooks/use-filters'
 import { useQuery } from './hooks/use-query'
 import { fetchTrendKpis, fetchContentKpis, fetchCategories, fetchDateRange } from './lib/queries'
 import { supabaseMisconfigured } from './lib/supabase'
+import type { SelectedUser } from './types/database'
 
 type ActiveTab = 'trends' | 'content' | 'users'
 
 function App() {
   const [dictionaryOpen, setDictionaryOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<ActiveTab>('trends')
+  const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null)
 
   const metaQuery = useQuery(
     async () => {
@@ -57,6 +59,12 @@ function App() {
 
   const handleOpenDictionary = useCallback(() => setDictionaryOpen(true), [])
   const handleCloseDictionary = useCallback(() => setDictionaryOpen(false), [])
+  const handleClearUser = useCallback(() => setSelectedUser(null), [])
+
+  const highlightedCategories = useMemo(
+    () => selectedUser?.categories ?? [],
+    [selectedUser]
+  )
 
   if (supabaseMisconfigured) {
     return (
@@ -108,6 +116,8 @@ function App() {
           onFilterChange={setFilters}
           categories={categories}
           dateRange={metaQuery.data?.dateRange ?? { min: defaultFrom, max: defaultTo }}
+          selectedUser={selectedUser}
+          onClearUser={handleClearUser}
         />
 
         {dataLoading ? (
@@ -127,30 +137,43 @@ function App() {
             />
 
             <div className="flex items-center gap-1 bg-muted rounded-lg p-1 w-fit">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key)}
-                  className={`px-5 py-2 text-sm rounded-md transition-all duration-200 font-medium cursor-pointer ${activeTab === tab.key ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                >
-                  {tab.label}
-                </button>
-              ))}
+              {tabs.map((tab) => {
+                const hasUserHighlight = selectedUser && tab.key !== 'users'
+                return (
+                  <button
+                    key={tab.key}
+                    onClick={() => setActiveTab(tab.key)}
+                    className={`relative px-5 py-2 text-sm rounded-md transition-all duration-200 font-medium cursor-pointer ${activeTab === tab.key ? 'bg-card shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    {tab.label}
+                    {hasUserHighlight && activeTab !== tab.key && (
+                      <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-primary" />
+                    )}
+                  </button>
+                )
+              })}
             </div>
 
             {activeTab === 'trends' && (
               hasTrendData
-                ? <TrendSection data={trendQuery.data!} />
+                ? <TrendSection data={trendQuery.data!} highlightedCategories={highlightedCategories} />
                 : <EmptyState message="No trend data for these filters." />
             )}
 
             {activeTab === 'content' && (
               hasContentData
-                ? <ContentSection data={contentQuery.data!} />
+                ? <ContentSection data={contentQuery.data!} highlightedCategories={highlightedCategories} />
                 : <EmptyState message="No content data for these filters." />
             )}
 
-            {activeTab === 'users' && <UserSection filters={filters} categories={categories} />}
+            {activeTab === 'users' && (
+              <UserSection
+                filters={filters}
+                categories={categories}
+                selectedUser={selectedUser}
+                onSelectUser={setSelectedUser}
+              />
+            )}
           </>
         )}
       </main>

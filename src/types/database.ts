@@ -77,3 +77,14 @@ export interface FilterState {
   categories: string[]
   analysisType: 'all' | 'heuristic' | 'ai'
 }
+
+export interface SelectedUser {
+  user_id: string
+  username: string
+  influence_score_7d: number
+  followers_est: number
+  rank_overall: number
+  posts_7d: number
+  engagement_sum_7d: number
+  categories: string[]
+}

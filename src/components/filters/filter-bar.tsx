@@ -1,6 +1,6 @@
-import { Calendar, ListFilter as Filter, X } from 'lucide-react'
+import { Calendar, ListFilter as Filter, X, User } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
-import type { FilterState } from '../../types/database'
+import type { FilterState, SelectedUser } from '../../types/database'
 import { formatCategory } from '../../lib/utils'
 import { useState, useRef, useEffect } from 'react'
 
@@ -9,9 +9,11 @@ interface Props {
   onFilterChange: (update: Partial<FilterState>) => void
   categories: string[]
   dateRange: { min: string; max: string }
+  selectedUser?: SelectedUser | null
+  onClearUser?: () => void
 }
 
-export function FilterBar({ filters, onFilterChange, categories, dateRange }: Props) {
+export function FilterBar({ filters, onFilterChange, categories, dateRange, selectedUser, onClearUser }: Props) {
   const [catOpen, setCatOpen] = useState(false)
   const catRef = useRef<HTMLDivElement>(null)
 
@@ -143,6 +145,32 @@ export function FilterBar({ filters, onFilterChange, categories, dateRange }: Pr
           {format(parseISO(filters.dateFrom), 'MMM d')} - {format(parseISO(filters.dateTo), 'MMM d, yyyy')}
         </div>
       </div>
+
+      {selectedUser && (
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/8 border border-primary/20 rounded-lg">
+            <User className="h-3.5 w-3.5 text-primary" />
+            <span className="text-xs font-medium text-foreground">
+              Viewing: {selectedUser.username}
+            </span>
+            {selectedUser.categories.length > 0 && (
+              <span className="text-[10px] text-muted-foreground">
+                ({selectedUser.categories.map(formatCategory).join(', ')})
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={onClearUser}
+              className="ml-1 h-5 w-5 flex items-center justify-center rounded hover:bg-primary/15 transition-colors cursor-pointer"
+            >
+              <X className="h-3 w-3 text-primary" />
+            </button>
+          </div>
+          <span className="text-[10px] text-muted-foreground">
+            Related categories are highlighted across Trends and Content tabs
+          </span>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { TrendKpiDaily, ContentKpiDaily, UserInfluenceOverall, UserInfluenceByCategory, FilterState } from '../types/database'
+import type { TrendKpiDaily, ContentKpiDaily, UserInfluenceOverall, UserInfluenceByCategory, FilterState, SelectedUser } from '../types/database'
 
 export async function fetchTrendKpis(filters: FilterState): Promise<TrendKpiDaily[]> {
   let query = supabase
@@ -117,6 +117,57 @@ export async function fetchCategories(): Promise<string[]> {
   if (error) throw error
   const unique = [...new Set((data ?? []).map((d: { category: string }) => d.category))].sort()
   return unique
+}
+
+export async function fetchUserCategoryBreakdown(
+  userId: string,
+  filters: FilterState
+): Promise<{ categories: string[]; breakdown: UserInfluenceByCategory[] }> {
+  const latestDateResult = await supabase
+    .from('gl_user_influence_7d_by_category')
+    .select('window_end_date')
+    .eq('user_id', userId)
+    .lte('window_end_date', filters.dateTo)
+    .gte('window_end_date', filters.dateFrom)
+    .order('window_end_date', { ascending: false })
+    .limit(1)
+
+  const latestDate = latestDateResult.data?.[0]?.window_end_date
+  if (!latestDate) return { categories: [], breakdown: [] }
+
+  let query = supabase
+    .from('gl_user_influence_7d_by_category')
+    .select('window_end_date,category,analysis_type,user_id,username,posts_7d,engagement_sum_7d,avg_engagement_7d,followers_est,influence_score_7d,rank_in_category')
+    .eq('user_id', userId)
+    .eq('window_end_date', latestDate)
+    .order('influence_score_7d', { ascending: false })
+
+  if (filters.analysisType !== 'all') {
+    query = query.eq('analysis_type', filters.analysisType)
+  }
+
+  const { data, error } = await query
+  if (error) throw error
+  const breakdown = (data ?? []) as UserInfluenceByCategory[]
+  const categories = [...new Set(breakdown.map((r) => r.category))]
+  return { categories, breakdown }
+}
+
+export async function buildSelectedUser(
+  overallRow: UserInfluenceOverall,
+  filters: FilterState
+): Promise<SelectedUser> {
+  const { categories } = await fetchUserCategoryBreakdown(overallRow.user_id, filters)
+  return {
+    user_id: overallRow.user_id,
+    username: overallRow.username,
+    influence_score_7d: Number(overallRow.influence_score_7d),
+    followers_est: overallRow.followers_est,
+    rank_overall: overallRow.rank_overall,
+    posts_7d: overallRow.posts_7d,
+    engagement_sum_7d: Number(overallRow.engagement_sum_7d),
+    categories,
+  }
 }
 
 export async function fetchDateRange(): Promise<{ min: string; max: string }> {

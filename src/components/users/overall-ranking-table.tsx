@@ -8,9 +8,11 @@ interface Props {
   data: UserInfluenceOverall[]
   limit: number
   onLimitChange: (n: number) => void
+  selectedUserId?: string | null
+  onUserClick?: (row: UserInfluenceOverall) => void
 }
 
-export function OverallRankingTable({ data, limit, onLimitChange }: Props) {
+export function OverallRankingTable({ data, limit, onLimitChange, selectedUserId, onUserClick }: Props) {
   const windowDate = data[0]?.window_end_date ?? '-'
 
   return (
@@ -59,22 +61,36 @@ export function OverallRankingTable({ data, limit, onLimitChange }: Props) {
             </tr>
           </thead>
           <tbody>
-            {data.map((row) => (
-              <tr key={`${row.user_id}-${row.analysis_type}`} className="border-t hover:bg-muted/30 transition-colors">
-                <td className="px-3 py-2 tabular-nums font-medium">{row.rank_overall}</td>
-                <td className="px-3 py-2 font-medium">{row.username || row.user_id || '-'}</td>
-                <td className="px-3 py-2">
-                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${row.analysis_type === 'ai' ? 'bg-sky-50 text-sky-700' : 'bg-amber-50 text-amber-700'}`}>
-                    {row.analysis_type}
-                  </span>
-                </td>
-                <td className="px-3 py-2 tabular-nums text-right">{row.posts_7d}</td>
-                <td className="px-3 py-2 tabular-nums text-right">{formatScore(Number(row.engagement_sum_7d))}</td>
-                <td className="px-3 py-2 tabular-nums text-right">{formatScore(Number(row.avg_engagement_7d), 3)}</td>
-                <td className="px-3 py-2 tabular-nums text-right">{formatNumber(row.followers_est)}</td>
-                <td className="px-3 py-2 tabular-nums text-right font-medium">{formatScore(Number(row.influence_score_7d))}</td>
-              </tr>
-            ))}
+            {data.map((row) => {
+              const isSelected = selectedUserId === row.user_id
+              return (
+                <tr
+                  key={`${row.user_id}-${row.analysis_type}`}
+                  className={`border-t transition-colors ${isSelected ? 'bg-primary/8 ring-1 ring-inset ring-primary/20' : 'hover:bg-muted/30'}`}
+                >
+                  <td className="px-3 py-2 tabular-nums font-medium">{row.rank_overall}</td>
+                  <td className="px-3 py-2 font-medium">
+                    <button
+                      type="button"
+                      onClick={() => onUserClick?.(row)}
+                      className="text-primary hover:text-primary/80 hover:underline transition-colors cursor-pointer"
+                    >
+                      {row.username || row.user_id || '-'}
+                    </button>
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${row.analysis_type === 'ai' ? 'bg-sky-50 text-sky-700' : 'bg-amber-50 text-amber-700'}`}>
+                      {row.analysis_type}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2 tabular-nums text-right">{row.posts_7d}</td>
+                  <td className="px-3 py-2 tabular-nums text-right">{formatScore(Number(row.engagement_sum_7d))}</td>
+                  <td className="px-3 py-2 tabular-nums text-right">{formatScore(Number(row.avg_engagement_7d), 3)}</td>
+                  <td className="px-3 py-2 tabular-nums text-right">{formatNumber(row.followers_est)}</td>
+                  <td className="px-3 py-2 tabular-nums text-right font-medium">{formatScore(Number(row.influence_score_7d))}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

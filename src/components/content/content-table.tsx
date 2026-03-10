@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import type { ContentKpiDaily } from '../../types/database'
 import { DataTable, type Column } from '../shared/data-table'
 import { SectionCard } from '../shared/section-card'
@@ -5,6 +6,7 @@ import { formatCategory, formatScore, formatNumber } from '../../lib/utils'
 
 interface Props {
   data: ContentKpiDaily[]
+  highlightedCategories?: string[]
 }
 
 const columns: Column<ContentKpiDaily>[] = [
@@ -27,10 +29,23 @@ const columns: Column<ContentKpiDaily>[] = [
   { key: 'viral_ratio', label: 'Viral', align: 'right', render: (r) => formatScore(Number(r.viral_ratio), 4) },
 ]
 
-export function ContentTable({ data }: Props) {
+export function ContentTable({ data, highlightedCategories = [] }: Props) {
+  const hasHighlight = highlightedCategories.length > 0
+
+  const rowClassName = useCallback(
+    (row: ContentKpiDaily) => {
+      if (!hasHighlight) return 'hover:bg-muted/30'
+      const isMatch = highlightedCategories.includes(row.category)
+      return isMatch
+        ? 'bg-primary/6 hover:bg-primary/10 border-l-2 border-l-primary'
+        : 'opacity-50 hover:bg-muted/30'
+    },
+    [hasHighlight, highlightedCategories]
+  )
+
   return (
     <SectionCard title="Content KPI Detail Table" description="All columns with sorting and tooltips">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} rowClassName={hasHighlight ? rowClassName : undefined} />
     </SectionCard>
   )
 }

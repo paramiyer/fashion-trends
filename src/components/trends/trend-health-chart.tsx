@@ -7,11 +7,13 @@ import { formatCategory } from '../../lib/utils'
 
 interface Props {
   data: TrendKpiDaily[]
+  highlightedCategories?: string[]
 }
 
-export function TrendHealthChart({ data }: Props) {
+export function TrendHealthChart({ data, highlightedCategories = [] }: Props) {
   const categories = [...new Set(data.map((d) => d.category))]
   const dateMap = new Map<string, Record<string, { sum: number; count: number }>>()
+  const hasHighlight = highlightedCategories.length > 0
 
   for (const row of data) {
     if (!dateMap.has(row.date_utc)) dateMap.set(row.date_utc, {})
@@ -50,18 +52,22 @@ export function TrendHealthChart({ data }: Props) {
               labelFormatter={(v) => format(parseISO(v as string), 'MMM d, yyyy')}
             />
             <Legend wrapperStyle={{ fontSize: 11 }} formatter={(v: string) => formatCategory(v)} />
-            {categories.map((cat, i) => (
-              <Line
-                key={cat}
-                type="monotone"
-                dataKey={cat}
-                stroke={getCategoryColor(cat, i)}
-                strokeWidth={2}
-                dot={false}
-                name={cat}
-                connectNulls
-              />
-            ))}
+            {categories.map((cat, i) => {
+              const isHighlighted = highlightedCategories.includes(cat)
+              return (
+                <Line
+                  key={cat}
+                  type="monotone"
+                  dataKey={cat}
+                  stroke={getCategoryColor(cat, i)}
+                  strokeWidth={hasHighlight && isHighlighted ? 3.5 : 2}
+                  strokeOpacity={hasHighlight && !isHighlighted ? 0.2 : 1}
+                  dot={false}
+                  name={cat}
+                  connectNulls
+                />
+              )
+            })}
           </LineChart>
         </ResponsiveContainer>
       </div>

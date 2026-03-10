@@ -17,10 +17,11 @@ interface Props<T = any> {
   columns: Column<T>[]
   data: T[]
   pageSize?: number
+  rowClassName?: (row: T) => string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function DataTable<T extends Record<string, any>>({ columns, data, pageSize = 15 }: Props<T>) {
+export function DataTable<T extends Record<string, any>>({ columns, data, pageSize = 15, rowClassName }: Props<T>) {
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [page, setPage] = useState(0)
@@ -96,7 +97,7 @@ export function DataTable<T extends Record<string, any>>({ columns, data, pageSi
           </thead>
           <tbody>
             {paginated.map((row, i) => (
-              <tr key={i} className="border-t hover:bg-muted/30 transition-colors">
+              <tr key={i} className={`border-t transition-colors ${rowClassName ? rowClassName(row) : 'hover:bg-muted/30'}`}>
                 {columns.map((col) => (
                   <td
                     key={col.key}

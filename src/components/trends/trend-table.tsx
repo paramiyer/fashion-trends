@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import type { TrendKpiDaily } from '../../types/database'
 import { DataTable, type Column } from '../shared/data-table'
 import { SectionCard } from '../shared/section-card'
@@ -5,6 +6,7 @@ import { formatCategory, formatScore } from '../../lib/utils'
 
 interface Props {
   data: TrendKpiDaily[]
+  highlightedCategories?: string[]
 }
 
 const columns: Column<TrendKpiDaily>[] = [
@@ -31,10 +33,23 @@ const columns: Column<TrendKpiDaily>[] = [
   { key: 'trend_health_index', label: 'Health Idx', align: 'right', render: (r) => formatScore(Number(r.trend_health_index)) },
 ]
 
-export function TrendTable({ data }: Props) {
+export function TrendTable({ data, highlightedCategories = [] }: Props) {
+  const hasHighlight = highlightedCategories.length > 0
+
+  const rowClassName = useCallback(
+    (row: TrendKpiDaily) => {
+      if (!hasHighlight) return 'hover:bg-muted/30'
+      const isMatch = highlightedCategories.includes(row.category)
+      return isMatch
+        ? 'bg-primary/6 hover:bg-primary/10 border-l-2 border-l-primary'
+        : 'opacity-50 hover:bg-muted/30'
+    },
+    [hasHighlight, highlightedCategories]
+  )
+
   return (
     <SectionCard title="Trend KPI Detail Table" description="All columns with sorting and tooltips">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} rowClassName={hasHighlight ? rowClassName : undefined} />
     </SectionCard>
   )
 }
