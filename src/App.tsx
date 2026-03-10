@@ -20,21 +20,9 @@ function App() {
   const [dictionaryOpen, setDictionaryOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<ActiveTab>('trends')
 
-  if (supabaseMisconfigured) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
-        <div className="text-center max-w-md space-y-3">
-          <h2 className="text-lg font-semibold text-slate-900">Configuration Required</h2>
-          <p className="text-sm text-slate-500">
-            Missing Supabase environment variables. Ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file, then restart the dev server.
-          </p>
-        </div>
-      </div>
-    )
-  }
-
   const metaQuery = useQuery(
     async () => {
+      if (supabaseMisconfigured) return null
       const [categories, dateRange] = await Promise.all([fetchCategories(), fetchDateRange()])
       return { categories, dateRange }
     },
@@ -56,12 +44,12 @@ function App() {
   }, [metaQuery.data, setFilters])
 
   const trendQuery = useQuery(
-    () => fetchTrendKpis(filters),
+    () => supabaseMisconfigured ? Promise.resolve([]) : fetchTrendKpis(filters),
     [filters.dateFrom, filters.dateTo, filters.categories.join(','), filters.analysisType]
   )
 
   const contentQuery = useQuery(
-    () => fetchContentKpis(filters),
+    () => supabaseMisconfigured ? Promise.resolve([]) : fetchContentKpis(filters),
     [filters.dateFrom, filters.dateTo, filters.categories.join(','), filters.analysisType]
   )
 
@@ -69,6 +57,19 @@ function App() {
 
   const handleOpenDictionary = useCallback(() => setDictionaryOpen(true), [])
   const handleCloseDictionary = useCallback(() => setDictionaryOpen(false), [])
+
+  if (supabaseMisconfigured) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+        <div className="text-center max-w-md space-y-3">
+          <h2 className="text-lg font-semibold text-slate-900">Configuration Required</h2>
+          <p className="text-sm text-slate-500">
+            Missing Supabase environment variables. Ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file, then restart the dev server.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   if (metaQuery.loading) {
     return (
