@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react'
+import { Loader as Loader2 } from 'lucide-react'
 
 interface Props {
   message?: string

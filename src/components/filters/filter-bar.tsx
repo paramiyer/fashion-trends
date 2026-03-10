@@ -1,4 +1,4 @@
-import { Calendar, Filter, X } from 'lucide-react'
+import { Calendar, ListFilter as Filter, X } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
 import type { FilterState } from '@/types/database'
 import { formatCategory } from '@/lib/utils'
