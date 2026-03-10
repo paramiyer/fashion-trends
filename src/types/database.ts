@@ -45,7 +45,6 @@ export interface ContentKpiDaily {
 }
 
 export interface UserInfluenceOverall {
-  id: number
   window_end_date: string
   analysis_type: 'heuristic' | 'ai'
   user_id: string
@@ -59,7 +58,6 @@ export interface UserInfluenceOverall {
 }
 
 export interface UserInfluenceByCategory {
-  id: number
   window_end_date: string
   category: string
   analysis_type: 'heuristic' | 'ai'

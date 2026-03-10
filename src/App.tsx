@@ -12,12 +12,26 @@ import { EmptyState } from './components/shared/empty-state'
 import { useFilters } from './hooks/use-filters'
 import { useQuery } from './hooks/use-query'
 import { fetchTrendKpis, fetchContentKpis, fetchCategories, fetchDateRange } from './lib/queries'
+import { supabaseMisconfigured } from './lib/supabase'
 
 type ActiveTab = 'trends' | 'content' | 'users'
 
 function App() {
   const [dictionaryOpen, setDictionaryOpen] = useState(false)
   const [activeTab, setActiveTab] = useState<ActiveTab>('trends')
+
+  if (supabaseMisconfigured) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 p-6">
+        <div className="text-center max-w-md space-y-3">
+          <h2 className="text-lg font-semibold text-slate-900">Configuration Required</h2>
+          <p className="text-sm text-slate-500">
+            Missing Supabase environment variables. Ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file, then restart the dev server.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   const metaQuery = useQuery(
     async () => {

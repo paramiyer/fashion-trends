@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import type { FilterState } from '../../types/database'
 import { fetchUserInfluenceOverall, fetchUserInfluenceByCategory } from '../../lib/queries'
 import { useQuery } from '../../hooks/use-query'
@@ -17,6 +17,12 @@ interface Props {
 export function UserSection({ filters, categories }: Props) {
   const [overallLimit, setOverallLimit] = useState(25)
   const [selectedCategory, setSelectedCategory] = useState(categories[0] ?? '')
+
+  useEffect(() => {
+    if (categories.length > 0 && !categories.includes(selectedCategory)) {
+      setSelectedCategory(categories[0])
+    }
+  }, [categories, selectedCategory])
 
   const overallQuery = useQuery(
     () => fetchUserInfluenceOverall(filters, overallLimit),
