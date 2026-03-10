@@ -1,4 +1,4 @@
-import { X, User, TrendingUp, BarChart3 } from 'lucide-react'
+import { X, User, TrendingUp, ChartBar as BarChart3 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import type { FilterState, UserInfluenceByCategory } from '../../types/database'
 import { useQuery } from '../../hooks/use-query'
