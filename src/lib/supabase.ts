@@ -9,6 +9,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
   )
 }
 
-console.info('import.meta.env.VITE_SUPABASE_URL =', supabaseUrl)
-
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
