@@ -60,7 +60,7 @@ export async function fetchUserInfluenceOverall(
 
   let query = supabase
     .from('gl_user_influence_7d_overall')
-    .select('*')
+    .select('id, window_end_date, analysis_type, user_id, username, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_overall')
     .eq('window_end_date', latestDate)
     .order('rank_overall', { ascending: true })
     .limit(limit)
@@ -93,7 +93,7 @@ export async function fetchUserInfluenceByCategory(
 
   let query = supabase
     .from('gl_user_influence_7d_by_category')
-    .select('*')
+    .select('id, window_end_date, category, analysis_type, user_id, username, posts_7d, engagement_sum_7d, avg_engagement_7d, followers_est, influence_score_7d, rank_in_category')
     .eq('window_end_date', latestDate)
     .eq('category', category)
     .order('rank_in_category', { ascending: true })

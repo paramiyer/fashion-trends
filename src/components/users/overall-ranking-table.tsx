@@ -62,7 +62,7 @@ export function OverallRankingTable({ data, limit, onLimitChange }: Props) {
             {data.map((row) => (
               <tr key={`${row.user_id}-${row.analysis_type}`} className="border-t hover:bg-muted/30 transition-colors">
                 <td className="px-3 py-2 tabular-nums font-medium">{row.rank_overall}</td>
-                <td className="px-3 py-2 font-medium">{row.username}</td>
+                <td className="px-3 py-2 font-medium">{row.username || row.user_id || '-'}</td>
                 <td className="px-3 py-2">
                   <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${row.analysis_type === 'ai' ? 'bg-sky-50 text-sky-700' : 'bg-amber-50 text-amber-700'}`}>
                     {row.analysis_type}

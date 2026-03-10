@@ -9,8 +9,8 @@ interface Props {
 export function InfluenceChart({ data }: Props) {
   const top10 = data
     .slice(0, 10)
-    .map((row) => ({
-      username: row.username,
+    .map((row, i) => ({
+      username: row.username || row.user_id || `#${i + 1}`,
       influence_score_7d: Number(row.influence_score_7d),
     }))
 
