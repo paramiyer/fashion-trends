@@ -1,4 +1,4 @@
-import type { TrendKpiDaily } from '@/types/database'
+import type { TrendKpiDaily } from '../../types/database'
 import { TrendHealthChart } from './trend-health-chart'
 import { BreakoutScoreChart } from './breakout-score-chart'
 import { BreakoutDaysChart } from './breakout-days-chart'

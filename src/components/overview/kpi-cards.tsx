@@ -1,7 +1,7 @@
 import { TrendingUp, Zap, Flame, Sparkles, Award } from 'lucide-react'
-import { KpiTooltip } from '@/components/shared/kpi-tooltip'
-import type { TrendKpiDaily, ContentKpiDaily } from '@/types/database'
-import { formatScore } from '@/lib/utils'
+import { KpiTooltip } from '../shared/kpi-tooltip'
+import type { TrendKpiDaily, ContentKpiDaily } from '../../types/database'
+import { formatScore } from '../../lib/utils'
 
 interface KpiCardsProps {
   trendData: TrendKpiDaily[]

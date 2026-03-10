@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import type { FilterState } from '@/types/database'
+import type { FilterState } from '../types/database'
 
 function readFromUrl(defaultFrom: string, defaultTo: string): FilterState {
   const params = new URLSearchParams(window.location.search)

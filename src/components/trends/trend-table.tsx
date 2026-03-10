@@ -1,7 +1,7 @@
-import type { TrendKpiDaily } from '@/types/database'
-import { DataTable, type Column } from '@/components/shared/data-table'
-import { SectionCard } from '@/components/shared/section-card'
-import { formatCategory, formatScore } from '@/lib/utils'
+import type { TrendKpiDaily } from '../../types/database'
+import { DataTable, type Column } from '../shared/data-table'
+import { SectionCard } from '../shared/section-card'
+import { formatCategory, formatScore } from '../../lib/utils'
 
 interface Props {
   data: TrendKpiDaily[]

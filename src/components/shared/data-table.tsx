@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { KpiTooltip } from './kpi-tooltip'
-import { getKpiDescription } from '@/lib/kpi-dictionary'
+import { getKpiDescription } from '../../lib/kpi-dictionary'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Column<T = any> {

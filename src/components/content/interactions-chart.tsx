@@ -1,7 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { format, parseISO } from 'date-fns'
-import type { ContentKpiDaily } from '@/types/database'
-import { SectionCard } from '@/components/shared/section-card'
+import type { ContentKpiDaily } from '../../types/database'
+import { SectionCard } from '../shared/section-card'
 
 interface Props {
   data: ContentKpiDaily[]

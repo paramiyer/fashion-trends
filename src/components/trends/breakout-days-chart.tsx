@@ -1,7 +1,7 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import type { TrendKpiDaily } from '@/types/database'
-import { SectionCard } from '@/components/shared/section-card'
-import { formatCategory } from '@/lib/utils'
+import type { TrendKpiDaily } from '../../types/database'
+import { SectionCard } from '../shared/section-card'
+import { formatCategory } from '../../lib/utils'
 
 interface Props {
   data: TrendKpiDaily[]

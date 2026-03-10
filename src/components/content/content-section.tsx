@@ -1,4 +1,4 @@
-import type { ContentKpiDaily } from '@/types/database'
+import type { ContentKpiDaily } from '../../types/database'
 import { InteractionsChart } from './interactions-chart'
 import { QualityChart } from './quality-chart'
 import { ContentTable } from './content-table'

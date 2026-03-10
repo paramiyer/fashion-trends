@@ -1,6 +1,6 @@
 import { X } from 'lucide-react'
 import { useEffect } from 'react'
-import { kpiDictionary } from '@/lib/kpi-dictionary'
+import { kpiDictionary } from '../../lib/kpi-dictionary'
 
 interface Props {
   open: boolean

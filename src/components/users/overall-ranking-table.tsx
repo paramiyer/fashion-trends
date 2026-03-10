@@ -1,8 +1,8 @@
-import type { UserInfluenceOverall } from '@/types/database'
-import { KpiTooltip } from '@/components/shared/kpi-tooltip'
-import { getKpiDescription } from '@/lib/kpi-dictionary'
-import { formatScore, formatNumber } from '@/lib/utils'
-import { SectionCard } from '@/components/shared/section-card'
+import type { UserInfluenceOverall } from '../../types/database'
+import { KpiTooltip } from '../shared/kpi-tooltip'
+import { getKpiDescription } from '../../lib/kpi-dictionary'
+import { formatScore, formatNumber } from '../../lib/utils'
+import { SectionCard } from '../shared/section-card'
 
 interface Props {
   data: UserInfluenceOverall[]

@@ -1,13 +1,13 @@
 import { useState, useMemo } from 'react'
-import type { FilterState } from '@/types/database'
-import { fetchUserInfluenceOverall, fetchUserInfluenceByCategory } from '@/lib/queries'
-import { useQuery } from '@/hooks/use-query'
+import type { FilterState } from '../../types/database'
+import { fetchUserInfluenceOverall, fetchUserInfluenceByCategory } from '../../lib/queries'
+import { useQuery } from '../../hooks/use-query'
 import { OverallRankingTable } from './overall-ranking-table'
 import { CategoryRankingTable } from './category-ranking-table'
 import { InfluenceChart } from './influence-chart'
-import { LoadingState } from '@/components/shared/loading-state'
-import { ErrorState } from '@/components/shared/error-state'
-import { EmptyState } from '@/components/shared/empty-state'
+import { LoadingState } from '../shared/loading-state'
+import { ErrorState } from '../shared/error-state'
+import { EmptyState } from '../shared/empty-state'
 
 interface Props {
   filters: FilterState

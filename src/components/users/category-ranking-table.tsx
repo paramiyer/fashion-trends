@@ -1,9 +1,9 @@
-import type { UserInfluenceByCategory } from '@/types/database'
-import { KpiTooltip } from '@/components/shared/kpi-tooltip'
-import { getKpiDescription } from '@/lib/kpi-dictionary'
-import { formatScore, formatNumber, formatCategory } from '@/lib/utils'
-import { SectionCard } from '@/components/shared/section-card'
-import { EmptyState } from '@/components/shared/empty-state'
+import type { UserInfluenceByCategory } from '../../types/database'
+import { KpiTooltip } from '../shared/kpi-tooltip'
+import { getKpiDescription } from '../../lib/kpi-dictionary'
+import { formatScore, formatNumber, formatCategory } from '../../lib/utils'
+import { SectionCard } from '../shared/section-card'
+import { EmptyState } from '../shared/empty-state'
 
 interface Props {
   data: UserInfluenceByCategory[]

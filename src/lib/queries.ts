@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import type { TrendKpiDaily, ContentKpiDaily, UserInfluenceOverall, UserInfluenceByCategory, FilterState } from '@/types/database'
+import type { TrendKpiDaily, ContentKpiDaily, UserInfluenceOverall, UserInfluenceByCategory, FilterState } from '../types/database'
 
 export async function fetchTrendKpis(filters: FilterState): Promise<TrendKpiDaily[]> {
   let query = supabase

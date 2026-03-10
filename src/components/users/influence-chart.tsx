@@ -1,6 +1,6 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import type { UserInfluenceOverall } from '@/types/database'
-import { SectionCard } from '@/components/shared/section-card'
+import type { UserInfluenceOverall } from '../../types/database'
+import { SectionCard } from '../shared/section-card'
 
 interface Props {
   data: UserInfluenceOverall[]

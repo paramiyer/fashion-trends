@@ -1,9 +1,9 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { format, parseISO } from 'date-fns'
-import type { TrendKpiDaily } from '@/types/database'
-import { SectionCard } from '@/components/shared/section-card'
-import { getCategoryColor } from '@/lib/chart-colors'
-import { formatCategory } from '@/lib/utils'
+import type { TrendKpiDaily } from '../../types/database'
+import { SectionCard } from '../shared/section-card'
+import { getCategoryColor } from '../../lib/chart-colors'
+import { formatCategory } from '../../lib/utils'
 
 interface Props {
   data: TrendKpiDaily[]

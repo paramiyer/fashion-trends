@@ -1,7 +1,7 @@
-import type { ContentKpiDaily } from '@/types/database'
-import { DataTable, type Column } from '@/components/shared/data-table'
-import { SectionCard } from '@/components/shared/section-card'
-import { formatCategory, formatScore, formatNumber } from '@/lib/utils'
+import type { ContentKpiDaily } from '../../types/database'
+import { DataTable, type Column } from '../shared/data-table'
+import { SectionCard } from '../shared/section-card'
+import { formatCategory, formatScore, formatNumber } from '../../lib/utils'
 
 interface Props {
   data: ContentKpiDaily[]
