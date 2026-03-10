@@ -1,2 +1,12 @@
 .env
 .DS_Store
+__pycache__/
+*.pyc
+supabase/.temp/
+rel/silver_gold/pipeline/tmp/
+rel/data/ig/raw/*.json
+rel/data/ig/raw/*.jsonl
+rel/**/raw/*.json
+rel/**/raw/*.jsonl
+rel/**/data/**/*.json
+rel/**/data/**/*.jsonl
