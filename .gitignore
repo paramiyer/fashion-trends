@@ -10,3 +10,4 @@ rel/**/raw/*.json
 rel/**/raw/*.jsonl
 rel/**/data/**/*.json
 rel/**/data/**/*.jsonl
+node_modules

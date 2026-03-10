@@ -127,7 +127,7 @@ export function UserSection({ filters, categories, selectedUser, onSelectUser }:
       {popupUser && (
         <UserDetailPopup
           userId={popupUser.user_id}
-          username={popupUser.username}
+          username={popupUser.username ?? popupUser.user_id}
           influenceScore={Number(popupUser.influence_score_7d)}
           followersEst={popupUser.followers_est}
           rankOverall={popupUser.rank_overall}

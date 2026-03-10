@@ -1,0 +1,23 @@
+db:
+  url: "postgresql://postgres:<password>@<host>:5432/postgres"
+
+bronze:
+  instagram_jsonl_path: "rel/bronze/ig/raw/ig_posts_6mo_5000_mix.jsonl"
+
+run:
+  run_id: "run_YYYYMMDD_hhmm"
+  horizon: "d7"
+  metric_time_type: "age_day"
+  precomputed_predictions_path: ""
+
+model:
+  provider: "heuristic"
+  model_name: "gpt-5-nano"
+  use_batch_api: true
+  batch_window: "24h"
+  batch_input_jsonl: "rel/silver_gold/pipeline/tmp/batch_input.jsonl"
+  batch_output_jsonl: "rel/silver_gold/pipeline/tmp/batch_output.jsonl"
+
+thresholds:
+  share_threshold: 1000
+  breakout_z: 2.5

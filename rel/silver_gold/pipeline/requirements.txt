@@ -1,0 +1,6 @@
+psycopg[binary]
+pyyaml
+python-dotenv
+rich
+tqdm
+openai

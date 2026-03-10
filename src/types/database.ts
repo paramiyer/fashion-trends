@@ -1,5 +1,4 @@
 export interface TrendKpiDaily {
-  id: number
   date_utc: string
   category: string
   analysis_type: 'heuristic' | 'ai'
@@ -24,7 +23,6 @@ export interface TrendKpiDaily {
 }
 
 export interface ContentKpiDaily {
-  id: number
   date_utc: string
   category: string
   analysis_type: 'heuristic' | 'ai'
@@ -48,7 +46,7 @@ export interface UserInfluenceOverall {
   window_end_date: string
   analysis_type: 'heuristic' | 'ai'
   user_id: string
-  username: string
+  username?: string
   posts_7d: number
   engagement_sum_7d: number
   avg_engagement_7d: number
@@ -62,7 +60,7 @@ export interface UserInfluenceByCategory {
   category: string
   analysis_type: 'heuristic' | 'ai'
   user_id: string
-  username: string
+  username?: string
   posts_7d: number
   engagement_sum_7d: number
   avg_engagement_7d: number
